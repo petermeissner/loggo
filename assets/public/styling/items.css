@@ -1,0 +1,20 @@
+
+ #menuheader {
+  background-color: #111;
+  color: #fff;
+  padding-left: 20px;
+  margin-bottom: 10px;
+  font-size: 2em;
+} 
+
+#login {
+    background-color: #111;
+    color: #fff;
+    padding: 10px;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    font-size: 1.2em;
+}
+
+#tooltip {
+  padding:20px;
+}
