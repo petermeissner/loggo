@@ -11,19 +11,30 @@
 </head>
 
 <body>
-    
+
     <!-- structure for main content -->
     <div class="main">
-        <h1>Loggo</h1>
-    </div>        
+        <h1>Loggo/APIs</h1>
 
-    <!-- template menu-->
+        <div id="routes">
+            <h1>Routes:</h1>
+        </div>
+    </div>
+
+    <!-- input menu-->
     {{template "menu"}}
 
     <!-- scripts and such -->
     <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
     <script type="module">
+        var routes = {{.routes }};
+        var p = d3.select("#routes").selectAll("p")
+            .data(routes)
+            .enter()
+            .append("p")
+            .text(function (d) { return d; });
     </script>
+    
 </body>
 
 </html>
