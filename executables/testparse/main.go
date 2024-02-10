@@ -21,6 +21,8 @@ func main() {
 	scanner := bufio.NewScanner(file)
 	buf := make([]byte, 1e9)
 	scanner.Buffer(buf, 1e9)
+
+	// regexes
 	regex_start_date, _ := regexp.Compile("^[0-9]{4}-[0-9]{2}-[0-9]{2}") // regex to match date
 	regex_start_at, _ := regexp.Compile(`^\s+at `)                       // regex to match "at" in stack trace
 	regex_start_more, _ := regexp.Compile(`^\s+... \d+ more`)            // regex to match "... X more" in stack trace
@@ -37,7 +39,7 @@ func main() {
 		// get line
 		line := scanner.Text()
 
-		// check lines
+		// new entry (starts with date)
 		start_date = regex_start_date.Match([]byte(line))
 		if regex_start_at.Match([]byte(line)) {
 			start_at = start_at + 1
@@ -50,10 +52,12 @@ func main() {
 		// - append to current entry
 		// - discard
 		if start_date {
+			// handle new entries
 			log_entries = append(log_entries, log_entry)
 			println(log_entry)
 			log_entry = line
 		} else {
+			// handle appending to current entry or discarding non relevant content
 			if start_at <= 1 && !regex_start_more.Match([]byte(line)) && !regex_all_whitespace.Match([]byte(line)) {
 				if start_at == 1 {
 					log_entry = log_entry + " " + strings.Replace(line, "\t", "", -1)
