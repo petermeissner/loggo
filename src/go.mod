@@ -6,8 +6,10 @@ require (
 	github.com/gofiber/fiber/v2 v2.52.0
 	github.com/gofiber/template/html/v2 v2.1.0
 	github.com/gofiber/websocket/v2 v2.2.1
-	github.com/petermeissner/loggo/internal v0.0.0-20230208104028-c358bd845dee
+	github.com/petermeissner/loggo/internal v0.0.0
 )
+
+replace github.com/petermeissner/loggo/internal  => ../internal
 
 require (
 	github.com/andybalholm/brotli v1.1.0 // indirect
