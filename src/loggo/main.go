@@ -93,7 +93,9 @@ func main() {
 
 	})
 
-	// return simple list of available log files
+	// route:
+	// - /log_files
+	// - return simple list of available log files
 	app.Get("/log_files", func(c *fiber.Ctx) error {
 
 		// get list of log files

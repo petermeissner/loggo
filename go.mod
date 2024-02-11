@@ -7,6 +7,7 @@ require (
 	github.com/gofiber/template/html/v2 v2.1.0
 	github.com/gofiber/websocket/v2 v2.2.1
 	github.com/urfave/cli/v2 v2.27.1
+	golang.org/x/net v0.21.0
 )
 
 require (
@@ -27,6 +28,5 @@ require (
 	github.com/valyala/fasthttp v1.51.0 // indirect
 	github.com/valyala/tcplisten v1.0.0 // indirect
 	github.com/xrash/smetrics v0.0.0-20231213231151-1d8dd44e695e // indirect
-	golang.org/x/net v0.21.0 // indirect
 	golang.org/x/sys v0.17.0 // indirect
 )
