@@ -8,22 +8,25 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/template/html/v2"
 	"github.com/gofiber/websocket/v2"
+	util "github.com/petermeissner/loggo/src/util"
 )
 
 func main() {
 
 	// configs
 	configs := map[string]string{
-		"template_path": "./assets/views",
-		"template_ext":  ".html",
-		"static_path":   "./assets/public",
+		"template_path":    "./assets/views",
+		"template_ext":     ".html",
+		"static_path":      "./assets/public",
+		"log_path":         "./logs",
+		"log_path_pattern": ".*\\.log$",
 	}
 
 	// Startup checks
 	// ...
 
 	// check if template path exists
-	if File_exists(configs["template_path"]) {
+	if util.File_exists(configs["template_path"]) {
 		// ok
 	} else {
 		log.Println("template_path does not exist: ", configs["template_path"])
@@ -31,7 +34,7 @@ func main() {
 	}
 
 	// check if static path exists
-	if File_exists(configs["static_path"]) {
+	if util.File_exists(configs["static_path"]) {
 		// ok
 	} else {
 		log.Println("static_path does not exist: ", configs["static_path"])
@@ -65,7 +68,7 @@ func main() {
 
 		return c.Render("index", fiber.Map{
 			"timestamp": time.Now().Format("2006-01-02 15:04:05"),
-			"log_files": list_log_files(),
+			"log_files": util.File_list(configs["log_path"], configs["log_path_pattern"]),
 			"routes":    rout_paths,
 		})
 
@@ -84,7 +87,7 @@ func main() {
 
 		return c.Render("apis", fiber.Map{
 			"timestamp": time.Now().Format("2006-01-02 15:04:05"),
-			"log_files": list_log_files(),
+			"log_files": util.File_list(configs["log_path"], configs["log_path_pattern"]),
 			"routes":    rout_paths,
 		})
 
@@ -94,15 +97,17 @@ func main() {
 	app.Get("/log_files", func(c *fiber.Ctx) error {
 
 		// get list of log files
-		log_files := list_log_files()
+		log_files := util.File_list(configs["log_path"], configs["log_path_pattern"])
 
 		// return log files as json
 		return c.JSON(log_files)
 
 	})
 
+	// route:
+	// - /ws/echo
+	// - access websocket via ws://localhost:3000/ws/echo
 	app.Get("/ws/echo", websocket.New(func(c *websocket.Conn) {
-		// access websocket via ws://localhost:3000/ws/echo
 
 		var (
 			messageType int
@@ -129,6 +134,9 @@ func main() {
 		}
 	}))
 
+	// route:
+	// - /ws/test_stream
+	// - sends a stream of test messages every second
 	app.Get("/ws/test_stream", websocket.New(func(c *websocket.Conn) {
 
 		var (
@@ -154,8 +162,4 @@ func main() {
 
 	// start and listen
 	log.Fatal(app.Listen("localhost:3000"))
-}
-
-func File_exists(s string) {
-	panic("unimplemented")
 }
