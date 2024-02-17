@@ -1,8 +1,10 @@
 package main
 
 import (
+	"bufio"
 	"log"
 	"os"
+	"strconv"
 	"time"
 
 	"github.com/gofiber/fiber/v2"
@@ -40,6 +42,8 @@ func main() {
 		},
 
 		Commands: []*cli.Command{
+
+			// Command: serve
 			{
 				Name:  "serve",
 				Usage: "Serve log files in folder over websocket",
@@ -204,19 +208,46 @@ func main() {
 							var msg []byte
 							var err error
 
+							// open file
+							file, err := os.Open("./logs/" + c.Params("filename"))
+							if err != nil {
+								log.Fatal(err)
+							}
+							defer file.Close()
+
+							// file reader
+							scanner := bufio.NewScanner(file)
+							buf := make([]byte, 1e9)
+							scanner.Buffer(buf, 1e9)
+
+							// read file line by line
+							i := 0
 							messageType = 1
-							for {
-								// wait for 1 second
-								time.Sleep(1 * time.Second)
+							for scanner.Scan() {
+								scanner.Text()
 
 								// Write
-								msg = []byte("Echo from server @ " + time.Now().Format("2006-01-02 15:04:05"))
-								err = c.WriteMessage(messageType, []byte(msg))
+								msg = []byte(scanner.Text())
+								err = c.WriteMessage(messageType, []byte(strconv.Itoa(i)+string(msg)))
 								if err != nil {
 									log.Println("write:", err)
 									break
 								}
 							}
+
+							if err := scanner.Err(); err != nil {
+								log.Fatal(err)
+							}
+
+							for {
+								time.Sleep(10 * time.Second)
+								err = c.WriteMessage(messageType, []byte("Standby: "+time.Now().Format("2006-01-02 15:04:05")))
+								if err != nil {
+									log.Println("write:", err)
+									break
+								}
+							}
+
 						},
 							websocket.Config{EnableCompression: true}))
 
@@ -228,6 +259,7 @@ func main() {
 				},
 			},
 
+			// Command: version
 			{
 				Name:    "version",
 				Aliases: []string{"v"},
