@@ -2,3 +2,4 @@ logs/**
 **.exe
 error-small-log
 dist/**
+test.log
